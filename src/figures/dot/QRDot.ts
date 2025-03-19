@@ -33,6 +33,12 @@ export default class QRDot {
       case dotTypes.extraRounded:
         drawFunction = this._drawExtraRounded;
         break;
+      case dotTypes.star:
+        drawFunction = this._drawStar;
+        break;
+      case dotTypes.diamond:
+        drawFunction = this._drawDiamond;
+        break;
       case dotTypes.square:
       default:
         drawFunction = this._drawSquare;
@@ -74,6 +80,45 @@ export default class QRDot {
         this._element.setAttribute("y", String(y));
         this._element.setAttribute("width", String(size));
         this._element.setAttribute("height", String(size));
+      }
+    });
+  }
+
+  _basicStar(args: BasicFigureDrawArgs): void {
+    const { size, x, y } = args;
+
+    this._rotateFigure({
+      ...args,
+      draw: () => {
+        this._element = this._window.document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this._element.setAttribute(
+          "d",
+          `M ${x + size / 2} ${y}` +
+          `a ${size / 2} ${size / 2} 0 0 0 ${size / 2} ${size / 2}` +
+          `a ${size / 2} ${size / 2} 0 0 0 ${-size / 2} ${size / 2}` +
+          `a ${size / 2} ${size / 2} 0 0 0 ${-size / 2} ${-size / 2}` +
+          `a ${size / 2} ${size / 2} 0 0 0 ${size / 2} ${-size / 2}` +
+          `Z`
+        );
+      }
+    });
+  }
+
+  _basicDiamond(args: BasicFigureDrawArgs): void {
+    const { size, x, y } = args;
+
+    this._rotateFigure({
+      ...args,
+      draw: () => {
+        this._element = this._window.document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this._element.setAttribute(
+          "d",
+          `M ${x + size / 2} ${y}` +
+          `l ${size / 2} ${size / 2}` +
+          `l ${-size / 2} ${size / 2}` +
+          `l ${-size / 2} ${-size / 2}` +
+          `Z`
+        );
       }
     });
   }
@@ -163,6 +208,14 @@ export default class QRDot {
 
   _drawSquare({ x, y, size }: DrawArgs): void {
     this._basicSquare({ x, y, size, rotation: 0 });
+  }
+
+  _drawStar({ x, y, size }: DrawArgs): void {
+    this._basicStar({ x, y, size, rotation: 0 });
+  }
+
+  _drawDiamond({ x, y, size }: DrawArgs): void {
+    this._basicDiamond({ x, y, size, rotation: 0 });
   }
 
   _drawRounded({ x, y, size, getNeighbor }: DrawArgs): void {
